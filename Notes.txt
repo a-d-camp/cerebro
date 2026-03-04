@@ -1,0 +1,30 @@
+Code said:
+  ---
+  1. Upsert-style memory (biggest impact)
+  Before writing a new memory, query Chroma for similar existing ones. If a match is found, update/merge it rather than appending a new fragment. Over time, memories about the same topic get
+  richer instead of scattered. Right now you could have 20 fragments about your work and the bot only sees 5 of them.
+
+  2. Persistent user profile (always in context)
+  A separate document — maintained alongside Chroma — that's always injected into the system prompt regardless of the query. Periodically rewritten by the LLM to synthesise everything known
+  about you: personality, ongoing goals, relationships, recurring themes. This is what gives the feeling of the bot "knowing" you deeply rather than just recalling isolated facts.
+
+  3. Richer extraction
+  The current MEMORY_WRITE_PROMPT extracts bare facts at ≤200 tokens. Expanding it to capture why something matters, emotional context, and connections to other topics would make each memory
+  more useful.
+
+  4. Increase retrieval window
+  Low-effort, immediate improvement — bumping MEMORY_TOP_N_RETURN from 5 to 10 gives the LLM more to work with.
+
+  ---
+  My recommendation: start with #2 + #1 together. The profile gives immediate depth, and upsert-style writes make both the profile and Chroma get smarter over time rather than noisier.
+
+  Want to go ahead and implement that?
+
+
+❯ Say i want to do a "memory wipe" at some point (not now). What do I do?                                                                                                                      
+                                                                                                                                    
+⏺ Three things to clear:                                                                                                                                                                       
+                                                                                                                                                                                               
+  1. Chroma — delete the data/chroma/ directory
+  2. Profile — delete data/user_profile.md                                                                                                                                                     
+  3. SQLite — delete data/cerebro.db (conversation history) or, if you only want to clear memories but keep history, the memories table inside it
